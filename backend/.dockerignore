@@ -1,0 +1,8 @@
+outputs/
+uploads/
+__pycache__
+*.pyc
+.git
+.env
+*.md
+models/
