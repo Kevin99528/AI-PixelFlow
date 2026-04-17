@@ -15,6 +15,7 @@ services:
       - HOST=0.0.0.0
       - PORT=8000
       - LOG_LEVEL=info
+      - DOCKER_ENV=true
     restart: unless-stopped
     networks:
       - app-network

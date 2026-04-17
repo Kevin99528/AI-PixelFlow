@@ -10,7 +10,14 @@ RUN apt-get update && apt-get install -y \
     libxrender-dev \
     libgomp1 \
     curl \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
     && rm -rf /var/lib/apt/lists/*
+
+# 创建字体目录并设置权限
+RUN mkdir -p /usr/share/fonts/truetype/custom && \
+    fc-cache -fv
 
 COPY requirements.txt .
 

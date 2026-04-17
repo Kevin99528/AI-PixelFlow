@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 from pathlib import Path
+from app.core.font_config import get_font_mapping, get_default_fonts
 
 
 class TextRedrawService:
@@ -328,16 +329,9 @@ class TextRedrawService:
 
     @staticmethod
     def _get_font(size: int, font_family: str = None):
-        font_mapping = {
-            'simhei': 'C:/Windows/Fonts/simhei.ttf',
-            'simsun': 'C:/Windows/Fonts/simsun.ttc',
-            'simkai': 'C:/Windows/Fonts/simkai.ttf',
-            'simfang': 'C:/Windows/Fonts/simfang.ttf',
-            'lishu': 'C:/Windows/Fonts/simsun.ttf',
-            'stxingkai': 'C:/Windows/Fonts/stxingkai.ttf',
-            'stcaiyun': 'C:/Windows/Fonts/stcaiyun.ttf',
-            'sthuapo': 'C:/Windows/Fonts/sthuapo.ttf'
-        }
+        # 使用环境感知的字体配置
+        font_mapping = get_font_mapping()
+        default_fonts = get_default_fonts()
         
         if font_family and font_family in font_mapping:
             font_path = font_mapping[font_family]
@@ -347,16 +341,10 @@ class TextRedrawService:
                 except:
                     pass
         
-        default_fonts = [
-            ("C:/Windows/Fonts/msyh.ttc", size),
-            ("C:/Windows/Fonts/simhei.ttf", size),
-            ("C:/Windows/Fonts/simkai.ttf", size),
-        ]
-        
-        for path, sz in default_fonts:
+        for path in default_fonts:
             if os.path.exists(path):
                 try:
-                    return ImageFont.truetype(path, sz)
+                    return ImageFont.truetype(path, size)
                 except:
                     continue
         
