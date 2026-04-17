@@ -16,6 +16,7 @@ class TextRedrawService:
     @staticmethod
     def redraw_text(image_path: str, bbox: list, new_text: str,
                     font_size: int = None, font_color: list = None,
+                    font_family: str = None,  # 自定义字体
                     is_bold: bool = False,  # 文字加粗
                     has_gradient: bool = None, gradient_colors: list = None,
                     has_shadow: bool = None) -> dict:
@@ -59,6 +60,7 @@ class TextRedrawService:
             result = TextRedrawService._render_text_on_region(
                 orig, (x1, y1, x2, y2), new_text,
                 font_color=font_color, font_size=font_size,
+                font_family=font_family,
                 is_bold=is_bold,
                 has_gradient=has_gradient, gradient_colors=gradient_colors,
                 has_shadow=has_shadow
@@ -226,6 +228,7 @@ class TextRedrawService:
     @staticmethod
     def _render_text_on_region(img: Image.Image, bbox: tuple, new_text: str,
                                 font_color=None, font_size=None,
+                                font_family=None,  # 自定义字体
                                 is_bold=False,  # 文字加粗
                                 has_gradient=False, gradient_colors=None,
                                 has_shadow=False) -> Image.Image:
@@ -250,12 +253,12 @@ class TextRedrawService:
         result.paste(temp_img, (inpaint_x1, inpaint_y1))
         
         draw = ImageDraw.Draw(result)
-        font = TextRedrawService._get_font(font_size)
+        font = TextRedrawService._get_font(font_size, font_family)
         
         if new_text.strip():
             scale = 2
             scaled_size = font_size * scale
-            scaled_font = TextRedrawService._get_font(scaled_size)
+            scaled_font = TextRedrawService._get_font(scaled_size, font_family)
             
             region_w = x2 - x1
             region_h = y2 - y1
@@ -324,16 +327,33 @@ class TextRedrawService:
         return result
 
     @staticmethod
-    def _get_font(size: int):
-        font_paths = [
+    def _get_font(size: int, font_family: str = None):
+        font_mapping = {
+            'simhei': 'C:/Windows/Fonts/simhei.ttf',
+            'simsun': 'C:/Windows/Fonts/simsun.ttc',
+            'simkai': 'C:/Windows/Fonts/simkai.ttf',
+            'simfang': 'C:/Windows/Fonts/simfang.ttf',
+            'lishu': 'C:/Windows/Fonts/simsun.ttf',
+            'stxingkai': 'C:/Windows/Fonts/stxingkai.ttf',
+            'stcaiyun': 'C:/Windows/Fonts/stcaiyun.ttf',
+            'sthuapo': 'C:/Windows/Fonts/sthuapo.ttf'
+        }
+        
+        if font_family and font_family in font_mapping:
+            font_path = font_mapping[font_family]
+            if os.path.exists(font_path):
+                try:
+                    return ImageFont.truetype(font_path, size)
+                except:
+                    pass
+        
+        default_fonts = [
             ("C:/Windows/Fonts/msyh.ttc", size),
             ("C:/Windows/Fonts/simhei.ttf", size),
             ("C:/Windows/Fonts/simkai.ttf", size),
-            ("C:/Windows/Fonts/msyh.ttc", size),
-            ("C:/Windows/Fonts/simhei.ttf", size),
         ]
         
-        for path, sz in font_paths:
+        for path, sz in default_fonts:
             if os.path.exists(path):
                 try:
                     return ImageFont.truetype(path, sz)

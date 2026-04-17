@@ -71,6 +71,7 @@ async def edit_text(request: dict):
     # 接收前端传递的样式参数（OCR识别到的原始样式）
     font_size = request.get("font_size")
     font_color = request.get("font_color")
+    font_family = request.get("font_family")  # 自定义字体
     is_bold = request.get("is_bold", False)  # 文字加粗
     has_gradient = request.get("has_gradient", False)
     gradient_colors = request.get("gradient_colors", [])
@@ -90,6 +91,7 @@ async def edit_text(request: dict):
             new_text=new_text,
             font_size=font_size,
             font_color=font_color,
+            font_family=font_family,
             is_bold=is_bold,
             has_gradient=has_gradient,
             gradient_colors=gradient_colors,

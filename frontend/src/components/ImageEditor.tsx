@@ -68,6 +68,7 @@ export default function ImageEditor({ imageUrl, onProcess, onBack }: ImageEditor
   const [customFontColor, setCustomFontColor] = useState<string | null>(null)
   const [customBold, setCustomBold] = useState(false)  // 文字加粗
   const [customGradient, setCustomGradient] = useState<string | null>(null)  // 渐变色预设
+  const [customFontFamily, setCustomFontFamily] = useState<string>('default')  // 自定义字体
   const [isRedrawing, setIsRedrawing] = useState(false)
   const [redrawResult, setRedrawResult] = useState<string | null>(null)
   const [showResultPreview, setShowResultPreview] = useState(false)
@@ -232,6 +233,7 @@ export default function ImageEditor({ imageUrl, onProcess, onBack }: ImageEditor
     setCustomFontColor(null)
     setCustomBold(false)
     setCustomGradient(null)
+    setCustomFontFamily('default')
   }, [])
 
   const handleTextRedraw = useCallback(async () => {
@@ -293,6 +295,7 @@ export default function ImageEditor({ imageUrl, onProcess, onBack }: ImageEditor
       const styleParams = {
         font_size: finalFontSize,
         font_color: finalFontColor,
+        font_family: customFontFamily !== 'default' ? customFontFamily : null,
         is_bold: customBold,                    // 加粗参数
         has_gradient: hasGradient,              // 是否使用渐变
         gradient_colors: finalGradientColors,   // 渐变颜色数组
@@ -339,7 +342,7 @@ export default function ImageEditor({ imageUrl, onProcess, onBack }: ImageEditor
     } finally {
       setIsRedrawing(false)
     }
-  }, [textInput, textBbox, imageUrl, customFontSize, customFontColor, customBold, customGradient])
+  }, [textInput, textBbox, imageUrl, customFontSize, customFontColor, customBold, customGradient, customFontFamily])
 
   const downloadResult = useCallback(async () => {
     if (!redrawResult) return
@@ -842,6 +845,32 @@ export default function ImageEditor({ imageUrl, onProcess, onBack }: ImageEditor
                               />
                             </div>
                           </label>
+                        </div>
+
+                        {/* 字体选择 */}
+                        <div className="mb-2.5">
+                          <label className="block text-[10px] text-gray-500 mb-1.5">字体样式</label>
+                          <select
+                            value={customFontFamily}
+                            onChange={(e) => setCustomFontFamily(e.target.value)}
+                            className="w-full px-2.5 py-2 rounded-lg border border-gray-200 focus:border-sky-400 focus:ring-1 focus:ring-sky-100 outline-none text-xs bg-white cursor-pointer hover:border-sky-300 transition-all"
+                          >
+                            <option value="default">默认（微软雅黑）</option>
+                            <option value="simhei">黑体 (SimHei)</option>
+                            <option value="simsun">宋体 (SimSun)</option>
+                            <option value="simkai">楷体 (SimKai)</option>
+                            <option value="simfang">仿宋 (SimFang)</option>
+                            <option value="lishu">隶书 (LiSu)</option>
+                            <option value="stxingkai">行楷 (STXingKai)</option>
+                            <option value="stcaiyun">华文彩云 (STCaiyun)</option>
+                            <option value="sthuapo">华文琥珀 (STHupo)</option>
+                          </select>
+                          {customFontFamily !== 'default' && (
+                            <div className="mt-1 flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-sky-500" />
+                              <span className="text-[9px] text-sky-600 font-medium">已选择自定义字体</span>
+                            </div>
+                          )}
                         </div>
                         
                         {/* 渐变色选择 */}
